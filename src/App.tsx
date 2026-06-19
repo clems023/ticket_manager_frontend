@@ -1,15 +1,7 @@
-import { LoginRegister } from "./pages/LoginRegister";
-import { Home } from "./pages/Home";
-import { useAuth } from "./contexts/AuthContext";
+import { AppRouter } from "./routes/AppRouter";
 
 function App() {
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return <LoginRegister />;
-  }
-
-  return <Home />;
+  return <AppRouter />;
 }
 
 export default App;

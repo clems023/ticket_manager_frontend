@@ -12,9 +12,9 @@ export function useUpdateTicket() {
       id: number;
       payload: UpdateTicketPayload;
     }) => updateTicket(id, payload),
-    onSuccess: (_, variables) => {
+    onSuccess: (updatedTicket, variables) => {
+      queryClient.setQueryData(["ticket", variables.id], updatedTicket);
       queryClient.invalidateQueries({ queryKey: ["tickets"] });
-      queryClient.invalidateQueries({ queryKey: ["tickets", variables.id] });
     },
   });
 }

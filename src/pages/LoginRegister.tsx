@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Input,
@@ -10,6 +10,7 @@ import {
   Alert,
 } from "../components/ui";
 import { useAuth } from "../contexts/AuthContext";
+import { getApiErrorMessage } from "../utils/apiError";
 
 type AuthFormData = {
   email: string;
@@ -18,26 +19,8 @@ type AuthFormData = {
 
 type Tab = "login" | "register";
 
-function getApiErrorMessage(error: unknown): string {
-  if (error instanceof AxiosError) {
-    const data = error.response?.data;
-    if (data && typeof data === "object") {
-      if (typeof data.message === "string") return data.message;
-      if (Array.isArray(data.message)) return data.message.join(", ");
-      if (typeof data.error === "string") return data.error;
-    }
-    if (error.response?.status === 401)
-      return "Email ou mot de passe incorrect.";
-    if (error.response?.status === 422) return "Données invalides.";
-    if (error.response?.status === 409)
-      return "Un compte existe déjà avec cet email.";
-    if (error.message) return error.message;
-  }
-  if (error instanceof Error) return error.message;
-  return "Une erreur est survenue. Réessayez.";
-}
-
 export function LoginRegister() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("login");
   const [apiError, setApiError] = useState<string | null>(null);
   const { login, register } = useAuth();
@@ -65,27 +48,28 @@ export function LoginRegister() {
       } else {
         await register(data.email, data.password);
       }
+      navigate("/");
     } catch (err) {
       setApiError(getApiErrorMessage(err));
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-12">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4 py-12 dark:bg-gray-900">
+      <Card className="w-full max-w-md dark:border-gray-700 dark:bg-gray-800">
         <CardHeader
           title="Ticket Manager"
           subtitle={tab === "login" ? "Connexion" : "Créer un compte"}
         />
         <CardContent className="space-y-4">
-          <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+          <div className="flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-gray-600 dark:bg-gray-700">
             <button
               type="button"
               onClick={() => onTabChange("login")}
               className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 tab === "login"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
               }`}
             >
               Connexion
@@ -95,8 +79,8 @@ export function LoginRegister() {
               onClick={() => onTabChange("register")}
               className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 tab === "register"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "bg-white text-gray-900 shadow-sm dark:bg-gray-800 dark:text-gray-100"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
               }`}
             >
               Inscription

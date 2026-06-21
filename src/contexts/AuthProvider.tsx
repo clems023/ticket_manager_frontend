@@ -1,13 +1,12 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useMemo,
   useState,
   type ReactNode,
 } from "react";
 import type { User } from "../api/auth";
 import { login as apiLogin, register as apiRegister } from "../api/auth";
+import { AuthContext, type AuthContextValue } from "./auth-context";
 
 const TOKEN_KEY = "token";
 const USER_KEY = "user";
@@ -25,17 +24,6 @@ function getStoredUser(): User | null {
     return null;
   }
 }
-
-interface AuthContextValue {
-  token: string | null;
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setTokenState] = useState<string | null>(getStoredToken);
@@ -57,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, password: string) => {
       const res = await apiLogin({ email, password });
       setToken(res.token);
-      setUser(null); // login ne renvoie pas user, on garde l’ancien ou null
+      setUser(null);
     },
     [setToken],
   );
@@ -89,12 +77,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return ctx;
 }

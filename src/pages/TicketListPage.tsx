@@ -25,13 +25,22 @@ export function TicketListPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(filters.search), 300);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+      setPage(1);
+    }, 300);
     return () => clearTimeout(timer);
   }, [filters.search]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, filters.status, filters.priority]);
+  const handleFiltersChange = (newFilters: TicketFiltersState) => {
+    const statusOrPriorityChanged =
+      newFilters.status !== filters.status ||
+      newFilters.priority !== filters.priority;
+    setFilters(newFilters);
+    if (statusOrPriorityChanged) {
+      setPage(1);
+    }
+  };
 
   const { data, isLoading, isError, error } = useTickets({
     page,
@@ -71,7 +80,7 @@ export function TicketListPage() {
           }
         />
         <CardContent className="space-y-6">
-          <TicketFilters filters={filters} onChange={setFilters} />
+          <TicketFilters filters={filters} onChange={handleFiltersChange} />
 
           {isLoading && <TicketListSkeleton />}
 

@@ -9,7 +9,7 @@ import {
   CardContent,
   Alert,
 } from "../components/ui";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { getApiErrorMessage } from "../utils/apiError";
 
 type AuthFormData = {

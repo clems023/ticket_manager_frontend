@@ -106,12 +106,12 @@ function normalizeTicket(data: unknown): Ticket {
     typeof record.data === "object" &&
     "id" in (record.data as object)
   ) {
-    return record.data as Ticket;
+    return record.data as unknown as Ticket;
   }
 
   // Réponse directe : { id, title, ... }
   if ("id" in record && "title" in record) {
-    return record as Ticket;
+    return record as unknown as Ticket;
   }
 
   throw new Error("Format de ticket non reconnu");

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../ui";
 import { useAuth } from "../../hooks/useAuth";
